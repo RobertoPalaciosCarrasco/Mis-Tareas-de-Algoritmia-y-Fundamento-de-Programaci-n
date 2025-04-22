@@ -85,6 +85,11 @@
       margin: 8px 0 20px 0;
       color: #444;
     }
+    .nombre-inline {
+      font-size: 0.85em;
+      color: #666;
+      margin-top: 4px;
+    }
   </style>
 </head>
 <body>
@@ -95,8 +100,53 @@
   <div id="nombre-actual"></div>
 
   <!-- TAREAS -->
-  <!-- (Contenido de las tareas permanece igual) -->
-  <!-- OMITIDO PARA BREVIDAD -->
+  <div class="tarea" data-id="tarea1">
+    <h2>Tarea 1: Ppt de exposición</h2>
+    <p>Semana 1.</p>
+    <a href="semana1.pdf" download>Descargar código</a>
+    <div>
+      <p class="nombre-inline">Nombre activo: <span class="nombre-visible"></span></p>
+      <textarea placeholder="Escribe un comentario..." class="comentario-input"></textarea>
+      <button class="guardar-comentario">Guardar comentario</button>
+      <div class="comentarios"></div>
+    </div>
+  </div>
+
+  <div class="tarea" data-id="tarea2">
+    <h2>Tarea 2: Ppt de exposición</h2>
+    <p>Semana 2.</p>
+    <a href="semana2.pdf" download>Descargar código</a>
+    <div>
+      <p class="nombre-inline">Nombre activo: <span class="nombre-visible"></span></p>
+      <textarea placeholder="Escribe un comentario..." class="comentario-input"></textarea>
+      <button class="guardar-comentario">Guardar comentario</button>
+      <div class="comentarios"></div>
+    </div>
+  </div>
+
+  <div class="tarea" data-id="tarea3">
+    <h2>Tarea 3: INFORME_DE_EJERCICIOS_DE_PROGRAMACIÓN (lista 1)</h2>
+    <p>Semana 3.</p>
+    <a href="semana3.pdf" download>Descargar código</a>
+    <div>
+      <p class="nombre-inline">Nombre activo: <span class="nombre-visible"></span></p>
+      <textarea placeholder="Escribe un comentario..." class="comentario-input"></textarea>
+      <button class="guardar-comentario">Guardar comentario</button>
+      <div class="comentarios"></div>
+    </div>
+  </div>
+
+  <div class="tarea" data-id="tarea4">
+    <h2>Tarea 4: INFORME_DE_EJERCICIOS_DE_PROGRAMACIÓN (lista 2)</h2>
+    <p>Semana 4.</p>
+    <a href="semana4.pdf" download>Descargar código</a>
+    <div>
+      <p class="nombre-inline">Nombre activo: <span class="nombre-visible"></span></p>
+      <textarea placeholder="Escribe un comentario..." class="comentario-input"></textarea>
+      <button class="guardar-comentario">Guardar comentario</button>
+      <div class="comentarios"></div>
+    </div>
+  </div>
 
   <!-- Firebase SDKs -->
   <script type="module">
@@ -118,6 +168,7 @@
     function mostrarNombreActual() {
       const nombre = localStorage.getItem('nombreComentario') || 'Anónimo';
       document.getElementById('nombre-actual').textContent = `Comentando como: ${nombre}`;
+      document.querySelectorAll('.nombre-visible').forEach(span => span.textContent = nombre);
     }
 
     if (!localStorage.getItem('nombreComentario')) {
