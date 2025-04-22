@@ -52,8 +52,12 @@
     .comentario-item {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       padding: 4px 0;
+      gap: 8px;
+    }
+    .comentario-texto {
+      flex-grow: 1;
     }
     .eliminar {
       background-color: transparent;
@@ -62,6 +66,11 @@
       cursor: pointer;
       font-size: 16px;
       margin-left: 10px;
+    }
+    .meta {
+      font-size: 0.8em;
+      color: gray;
+      margin-bottom: 2px;
     }
   </style>
 </head>
@@ -130,6 +139,11 @@
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
 
+    function formatearFecha(fecha) {
+      const f = new Date(fecha);
+      return f.toLocaleDateString() + ' ' + f.toLocaleTimeString();
+    }
+
     document.querySelectorAll('.tarea').forEach(tarea => {
       const tareaId = tarea.getAttribute('data-id');
       const textarea = tarea.querySelector('.comentario-input');
@@ -139,10 +153,12 @@
       button.addEventListener('click', async () => {
         const texto = textarea.value.trim();
         if (texto) {
+          const nombre = prompt("Nombre del autor del comentario:", "Profesor");
           await addDoc(collection(db, 'comentarios'), {
             tarea: tareaId,
             texto: texto,
-            fecha: new Date()
+            fecha: new Date().toISOString(),
+            autor: nombre || "Anónimo"
           });
           textarea.value = '';
         }
@@ -155,8 +171,17 @@
           const data = docSnap.data();
           const contenedor = document.createElement('div');
           contenedor.className = 'comentario-item';
-          const p = document.createElement('p');
-          p.textContent = data.texto;
+
+          const contenido = document.createElement('div');
+          contenido.className = 'comentario-texto';
+          const meta = document.createElement('div');
+          meta.className = 'meta';
+          meta.textContent = `${data.autor || 'Anónimo'} | ${formatearFecha(data.fecha)}`;
+          const texto = document.createElement('p');
+          texto.textContent = data.texto;
+          contenido.appendChild(meta);
+          contenido.appendChild(texto);
+
           const btnEliminar = document.createElement('button');
           btnEliminar.textContent = '🗑️';
           btnEliminar.className = 'eliminar';
@@ -165,7 +190,8 @@
               await deleteDoc(doc(db, 'comentarios', docSnap.id));
             }
           };
-          contenedor.appendChild(p);
+
+          contenedor.appendChild(contenido);
           contenedor.appendChild(btnEliminar);
           comentariosDiv.appendChild(contenedor);
         });
