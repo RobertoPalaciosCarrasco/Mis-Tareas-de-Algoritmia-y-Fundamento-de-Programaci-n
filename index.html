@@ -3,52 +3,148 @@
 <head>
   <meta charset="UTF-8">
   <title>Mis Tareas de Algoritmia y Fundamento de Programación</title>
+  <!-- Fuente Moderna -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
   <style>
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Poppins', Arial, sans-serif;
       background-color: #f3f3f3;
       padding: 20px;
+      color: #333;
     }
     h1 {
-      color: #333;
+      color: #1a73e8;
     }
     .tarea {
       background-color: white;
       padding: 15px;
       border-radius: 8px;
-      margin-bottom: 20px;
+      margin-bottom: 30px;
       box-shadow: 0 2px 5px rgba(0,0,0,0.1);
     }
     a {
-      color: #007BFF;
+      color: #1a73e8;
+      text-decoration: none;
+    }
+    a:hover {
+      text-decoration: underline;
+    }
+    textarea {
+      width: 100%;
+      border-radius: 5px;
+      padding: 8px;
+      margin-top: 8px;
+      resize: vertical;
+    }
+    button {
+      background-color: #1a73e8;
+      color: white;
+      border: none;
+      padding: 8px 12px;
+      margin-top: 6px;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+    .comentarios {
+      margin-top: 10px;
+      padding-left: 10px;
+      border-left: 3px solid #ccc;
     }
   </style>
 </head>
 <body>
   <h1>Mis Tareas de Algoritmia y Fundamento de Programación</h1>
 
-  <div class="tarea">
-    <h2>Tarea 1: Ppt de exposicion</h2>
-    <p>semana 1.</p>
+  <!-- TAREAS -->
+  <div class="tarea" data-id="tarea1">
+    <h2>Tarea 1: Ppt de exposición</h2>
+    <p>Semana 1.</p>
     <a href="semana1.pdf" download>Descargar código</a>
+    <div>
+      <textarea placeholder="Escribe un comentario..." class="comentario-input"></textarea>
+      <button class="guardar-comentario">Guardar comentario</button>
+      <div class="comentarios"></div>
+    </div>
   </div>
 
-  <div class="tarea">
-    <h2>Tarea 2: Ppt de exposicion</h2>
-    <p>semana 2.</p>
+  <div class="tarea" data-id="tarea2">
+    <h2>Tarea 2: Ppt de exposición</h2>
+    <p>Semana 2.</p>
     <a href="semana2.pdf" download>Descargar código</a>
+    <div>
+      <textarea placeholder="Escribe un comentario..." class="comentario-input"></textarea>
+      <button class="guardar-comentario">Guardar comentario</button>
+      <div class="comentarios"></div>
+    </div>
   </div>
 
-  <div class="tarea">
-    <h2>Tarea 3: INFORME_DE_EJERCICIOS_DE_PROGRAMACIÓN(lista1)</h2>
-    <p>semana 3.</p>
+  <div class="tarea" data-id="tarea3">
+    <h2>Tarea 3: INFORME_DE_EJERCICIOS_DE_PROGRAMACIÓN (lista 1)</h2>
+    <p>Semana 3.</p>
     <a href="semana3.pdf" download>Descargar código</a>
+    <div>
+      <textarea placeholder="Escribe un comentario..." class="comentario-input"></textarea>
+      <button class="guardar-comentario">Guardar comentario</button>
+      <div class="comentarios"></div>
+    </div>
   </div>
-  
-  <div class="tarea">
-    <h2>Tarea 4: INFORME_DE_EJERCICIOS_DE_PROGRAMACIÓN(lista2)</h2>
-    <p>semana 4.</p>
+
+  <div class="tarea" data-id="tarea4">
+    <h2>Tarea 4: INFORME_DE_EJERCICIOS_DE_PROGRAMACIÓN (lista 2)</h2>
+    <p>Semana 4.</p>
     <a href="semana4.pdf" download>Descargar código</a>
+    <div>
+      <textarea placeholder="Escribe un comentario..." class="comentario-input"></textarea>
+      <button class="guardar-comentario">Guardar comentario</button>
+      <div class="comentarios"></div>
+    </div>
   </div>
+
+  <!-- Firebase SDKs -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, onSnapshot, where } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyB--zpdg_57jCKo-SifJRXvFM4sopD90K",
+      authDomain: "comentarios-tareas.firebaseapp.com",
+      projectId: "comentarios-tareas",
+      storageBucket: "comentarios-tareas.appspot.com",
+      messagingSenderId: "98523483833",
+      appId: "1:98523483833:web:7bab4c39016b1624129568"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+
+    document.querySelectorAll('.tarea').forEach(tarea => {
+      const tareaId = tarea.getAttribute('data-id');
+      const textarea = tarea.querySelector('.comentario-input');
+      const button = tarea.querySelector('.guardar-comentario');
+      const comentariosDiv = tarea.querySelector('.comentarios');
+
+      button.addEventListener('click', async () => {
+        const texto = textarea.value.trim();
+        if (texto) {
+          await addDoc(collection(db, 'comentarios'), {
+            tarea: tareaId,
+            texto: texto,
+            fecha: new Date()
+          });
+          textarea.value = '';
+        }
+      });
+
+      const q = query(collection(db, 'comentarios'), where('tarea', '==', tareaId));
+      onSnapshot(q, (snapshot) => {
+        comentariosDiv.innerHTML = '';
+        snapshot.forEach(doc => {
+          const p = document.createElement('p');
+          p.textContent = doc.data().texto;
+          comentariosDiv.appendChild(p);
+        });
+      });
+    });
+  </script>
 </body>
 </html>
